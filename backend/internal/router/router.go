@@ -1,6 +1,7 @@
 package router
 
 import (
+	"os"
 	"time"
 	"zen/internal/handler"
 	"zen/internal/middleware"
@@ -15,8 +16,14 @@ func StartApp() *gin.Engine {
 	r := gin.Default()
 
 	//cors setup
+
+	frontendURL := os.Getenv("FRONTEND_URL")
+	allowedOrigins := []string{"http://localhost:5173"}
+	if frontendURL != "" {
+		allowedOrigins = append(allowedOrigins, frontendURL)
+	}
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173"},
+		AllowOrigins:     allowedOrigins,
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
