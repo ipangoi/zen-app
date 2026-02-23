@@ -113,20 +113,20 @@ function App() {
           <Background/>
           <div className='m-auto p-8 max-w-7xl items-center text-center'>
             
-            <div className="absolute top-5 right-4">
+            <div className="absolute top-5 left-1/2 -translate-x-1/2">
               <Timer isGuest={!isLoggedIn} activeTask={activeTask} onSelectTask={setActiveTask} endSession={handleSessionEnd}/> 
             </div>
-            <div className="absolute right-4 top-6/10 -translate-y-1/2"> 
+            <div className="absolute right-4 top-5 "> 
               {/* <Tasks isGuest={!isLoggedIn} bounds={screenBoundaryRef} onSetActiveTask={setActiveTask} activeTaskId={activeTask?.id}/>  */}
               <Tasks isGuest={!isLoggedIn} bounds={screenBoundaryRef} /> 
             </div>
-            <div className="absolute top-1/7 left-2 z-10">
+            <div className="absolute top-2/11 left-2 z-10">
               {isLoggedIn ? (
                 <SessionStats refreshToggle={isEndSession}/>
 
               ) :
                 <></>
-                // <SessionStats bounds={screenBoundaryRef} />
+                // <SessionStats refreshToggle={isEndSession} />
               }
             </div>
             <div className="absolute bottom-0 left-0 w-full z-10">

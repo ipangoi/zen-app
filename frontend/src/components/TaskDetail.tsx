@@ -28,7 +28,7 @@ export default function TaskDetail({ task, onClose, onSave, bounds }: TaskDetail
                     exit={{ opacity: 0, scale: 0.9, x: 20 }}
                     drag
                     dragConstraints={bounds}
-                    className="absolute right-[calc(100%+1.5rem)] -top-1/2 bg-gray-800 border-2 border-gray-500 rounded-lg w-110 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden font-mono cursor-grab active:cursor-grabbing"
+                    className="absolute right-1/2 top-1/4 bg-gray-800 border-2 border-gray-500 rounded-lg w-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden font-mono cursor-grab active:cursor-grabbing"
                 >
                     <div className="bg-gray-700 border-b-2 border-gray-600 px-4 py-2 flex justify-between items-center ">
                         <div className="flex items-center gap-2">
