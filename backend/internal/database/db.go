@@ -7,7 +7,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -18,9 +17,10 @@ var (
 )
 
 func StartDB() {
-	err := godotenv.Load()
+	dsn := os.Getenv("DATABASE_URL")
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Println("env tidak terbaca")
+		panic("Gagal koneksi ke database Neon")
 	}
 	host := os.Getenv("DB_HOST")
 	port := os.Getenv("DB_PORT")
