@@ -3,7 +3,6 @@ package database
 import (
 	"zen/internal/model"
 
-	"fmt"
 	"log"
 	"os"
 
@@ -18,21 +17,8 @@ var (
 
 func StartDB() {
 	dsn := os.Getenv("DATABASE_URL")
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic("Gagal koneksi ke database Neon")
-	}
-	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT")
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASSWORD")
-	dbname := os.Getenv("DB_NAME")
 
-	config := fmt.Sprintf("host=%s port=%s user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-
-	db, err = gorm.Open(postgres.Open(config), &gorm.Config{})
+	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("error connecting to database :", err)
 	}
