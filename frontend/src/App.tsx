@@ -27,10 +27,10 @@ function App() {
 
 
   const handleLogout = () => {
-    window.location.reload();
     localStorage.removeItem('token');
     setIsLoggedIn(false);
     setUsername("");
+    window.location.reload();
   };
 
   const handleLogin = (name: string) => {
