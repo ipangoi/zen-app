@@ -6,10 +6,11 @@ interface TaskDetailProps {
     task: TaskItem;
     onClose: () => void;
     onSave: (updatedTask: TaskItem) => void;
-    bounds: any
+    bounds: any;
+    isLoading: boolean;
 }
 
-export default function TaskDetail({ task, onClose, onSave, bounds }: TaskDetailProps) {
+export default function TaskDetail({ task, onClose, onSave, bounds, isLoading }: TaskDetailProps) {
     const [isEditing, setIsEditing] = useState(false);
     const [title, setTitle] = useState(task.title);
     const [body, setBody] = useState(task.body);
@@ -37,7 +38,7 @@ export default function TaskDetail({ task, onClose, onSave, bounds }: TaskDetail
                                 {isEditing ? "// Editing Mode" : "// Task Reader"}
                             </span>
                         </div>
-                        <button onClick={onClose} className="text-gray-400 hover:text-red-400 transition-colors cursor-pointer">
+                        <button disabled={isLoading} onClick={onClose} className="text-gray-400 hover:text-red-400 transition-colors cursor-pointer">
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
                     </div>
@@ -87,15 +88,25 @@ export default function TaskDetail({ task, onClose, onSave, bounds }: TaskDetail
                                     <>
                                         <button 
                                             onClick={() => setIsEditing(false)}
-                                            className="px-4 py-2 text-gray-500 hover:text-white text-[10px] font-bold transition-colors cursor-pointer"
+                                            disabled={isLoading}
+                                            className="px-4 py-2 text-gray-500 hover:text-white hover:bg-gray-700 rounded-lg text-[10px] font-bold transition-colors cursor-pointer"
                                         >
                                             DISCARD
                                         </button>
                                         <button 
                                             onClick={handleUpdate}
+                                            disabled={isLoading}
                                             className="px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white text-[10px] font-bold rounded shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-0.5 active:shadow-none transition-all cursor-pointer"
                                         >
-                                            SAVE CHANGES
+                                            {!isLoading ? 
+                                                "SAVE CHANGES"
+                                                :
+                                                <svg className="w-4 h-4 animate-spin text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+
+                                            }
                                         </button>
                                     </>
                                 )}

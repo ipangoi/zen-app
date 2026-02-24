@@ -75,7 +75,7 @@ export default function LoginModal({ isOpen, onClose, onLogin, onChange }: Login
                     <button 
                         onClick={onClose}
                         disabled={isLoading}
-                        className="text-gray-400 hover:text-red-400 transition-colors cursor-pointer"
+                        className="text-gray-400 hover:text-red-400 transition-colors cursor-pointer disabled:cursor-not-allowed"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"></path>
@@ -117,10 +117,10 @@ export default function LoginModal({ isOpen, onClose, onLogin, onChange }: Login
                             type="submit"
                             disabled={isLoading}
                             className=
-                            {`w-full py-2 rounded-sm text-sm font-bold border-b-4 active:border-b-0 active:translate-y-1 transition-all cursor-pointer 
+                            {`w-full py-2 rounded-sm text-sm font-bold border-b-4 active:border-b-0 active:translate-y-1 transition-all cursor-pointer disabled:cursor-not-allowed
                                 ${
                                     isLoading 
-                                    ? "bg-gray-600 text-gray-400 border-gray-700 cursor-not-allowed" 
+                                    ? "bg-gray-600 text-gray-400 border-gray-700 animate-pulse" 
                                     : "bg-violet-500 hover:bg-violet-400 text-black border-violet-700"
                                 }`
                             }

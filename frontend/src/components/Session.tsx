@@ -22,9 +22,12 @@ export default function StatsWidget({refreshToggle}: SessionProps) {
         lastActive: "--/--/----, --:--"
     });
 
+    const [isLoading, setIsLoading] = useState(true);
+
     const goalMinutes = 7200;
 
     const fetchStats = async () => {
+        setIsLoading(true);
         try {
             const response = await api.get('/session');
             const sessions: SessionItem[] = response.data.session || [];
@@ -60,6 +63,8 @@ export default function StatsWidget({refreshToggle}: SessionProps) {
             }
         } catch (error) {
             console.error("Failed to fetch stats:", error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -75,7 +80,7 @@ export default function StatsWidget({refreshToggle}: SessionProps) {
         const s = totalSeconds % 60;
         if (h > 0) return `${h}h ${m}m`;
         if (m > 0) return `${m}m ${s}s`;
-        return `${s}s`;
+        return `${m}m ${s}s`;
     };
 
     return (
@@ -85,49 +90,78 @@ export default function StatsWidget({refreshToggle}: SessionProps) {
                     Stats
                 </h2>
             </div>
+            {isLoading ? (
+                <div className="animate-pulse flex flex-col h-full flex-1">
+                    <div className="mb-4 flex flex-row justify-center gap-10">
+                        <div className="flex-1 bg-gray-700/50 h-19 rounded-lg"></div>
+                        <div className="flex-1 bg-gray-700/50 h-19 rounded-lg"></div>
+                    </div>
 
-            <div className="mb-4 flex flex-row justify-between">
-                <div className='text-center bg-gray-900/50 py-2 px-3 rounded-lg'>
-                    <p className="text-xs text-white uppercase tracking-wide">Total Focus</p>
-                    <p className="text-3xl font-bold text-violet-400 drop-shadow-[0_0_8px_rgba(52,0,153,0.8)]">
-                        {formatHours(stats.totalDurationSeconds)}
-                    </p>
-                </div>
-                <div className='text-center  bg-gray-900/50 py-2 px-3 rounded-lg'>
-                    <p className="text-xs text-white uppercase tracking-wide">Today Focus</p>
-                    <p className="text-3xl font-bold text-violet-400 drop-shadow-[0_0_8px_rgba(52,0,153,0.8)]">
-                        {formatHours(stats.todayDurationSeconds)}
-                    </p>
-                </div>
-            </div>
+                    <div className="space-y-4 mb-4 mt-2">
+                        <div className="flex justify-between">
+                            <div className="h-3 bg-gray-700/50 rounded w-full"></div>
+                        </div>
+                        <div className="flex justify-between">
+                            <div className="h-3 bg-gray-700/50 rounded w-full"></div>
+                        </div>
+                        <div className="flex justify-between">
+                            <div className="h-3 bg-gray-700/50 rounded w-full"></div>
+                        </div>
+                    </div>
 
-            <div className="space-y-3 mb-4">
-                <div className="flex justify-between text-xs">
-                    <span className="text-gray-400">Total Sessions</span>
-                    <span className="font-bold text-gray-200">{stats.totalSessions}</span>
+                    <div className="mt-auto pt-2">
+                        <div className="flex justify-between mb-2">
+                            <div className="h-2 bg-gray-700/50 rounded w-full"></div>
+                        </div>
+                        <div className="w-full bg-gray-700/50 h-2 rounded-full overflow-hidden"></div>
+                    </div>
                 </div>
-                <div className="flex justify-between text-xs">
-                    <span className="text-gray-400">Average Time</span>
-                    <span className="font-bold text-gray-200">{formatHours(stats.averageDuration)}</span>
-                </div>
-                <div className="flex justify-between text-xs">
-                    <span className="text-gray-400">Last Session</span>
-                    <span className="font-bold text-gray-200">{stats.lastActive}</span>
-                </div>
-            </div>
+            ) : (
+                <>
+                    <div className="mb-4 flex flex-row justify-center gap-10">
+                        <div className='flex-1 text-center bg-gray-900/50 py-2 px-3 rounded-lg '>
+                            <p className="text-xs text-white uppercase tracking-wide">Total Focus</p>
+                            <p className="text-3xl font-bold text-violet-400 drop-shadow-[0_0_8px_rgba(52,0,153,0.8)]">
+                                {formatHours(stats.totalDurationSeconds)}
+                            </p>
+                        </div>
+                        <div className='flex-1 text-center bg-gray-900/50 py-2 px-3 rounded-lg'>
+                            <p className="text-xs text-white uppercase tracking-wide">Today Focus</p>
+                            <p className="text-3xl font-bold text-violet-400 drop-shadow-[0_0_8px_rgba(52,0,153,0.8)]">
+                                {formatHours(stats.todayDurationSeconds)}
+                            </p>
+                        </div>
+                    </div>
 
-            <div className="mt-auto pt-2">
-                <div className="flex justify-between text-[10px] text-gray-400 mb-1">
-                    <span>Daily Goal (2h)</span>
-                    <span>{Math.round(progressPercentage)}%</span>
-                </div>
-                <div className="w-full bg-gray-900 h-2 rounded-full border border-gray-600 overflow-hidden">
-                    <div
-                        className="bg-violet-500 h-full transition-all duration-1000"
-                        style={{ width: `${progressPercentage}%` }}
-                    ></div>
-                </div>
-            </div>
+                    <div className="space-y-3 mb-4">
+                        <div className="flex justify-between text-xs">
+                            <span className="text-gray-400">Total Sessions</span>
+                            <span className="font-bold text-gray-200">{stats.totalSessions}</span>
+                        </div>
+                        <div className="flex justify-between text-xs">
+                            <span className="text-gray-400">Average Time</span>
+                            <span className="font-bold text-gray-200">{formatHours(stats.averageDuration)}</span>
+                        </div>
+                        <div className="flex justify-between text-xs">
+                            <span className="text-gray-400">Last Session</span>
+                            <span className="font-bold text-gray-200">{stats.lastActive}</span>
+                        </div>
+                    </div>
+
+                    <div className="mt-auto pt-2">
+                        <div className="flex justify-between text-[10px] text-gray-400 mb-1">
+                            <span>Daily Goal (2h)</span>
+                            <span>{Math.round(progressPercentage)}%</span>
+                        </div>
+                        <div className="w-full bg-gray-900 h-2 rounded-full border border-gray-600 overflow-hidden">
+                            <div
+                                className="bg-violet-500 h-full transition-all duration-1000"
+                                style={{ width: `${progressPercentage}%` }}
+                            ></div>
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
     );
 }

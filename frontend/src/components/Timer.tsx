@@ -24,6 +24,8 @@ export default function Timer({ isGuest, activeTask, onSelectTask, endSession }:
     const [availableTasks, setAvailableTasks] = useState<TaskItem[]>([]);
     const [isLoadingTasks, setIsLoadingTasks] = useState(false);
 
+    const [showTimeUp, setShowTimeUp] = useState(false);
+
     useEffect(() => {
         let interval: ReturnType<typeof setInterval> | null = null;
 
@@ -34,6 +36,9 @@ export default function Timer({ isGuest, activeTask, onSelectTask, endSession }:
         } else if (isActive && seconds === 0) {
             setIsActive(false);
             if (interval) clearInterval(interval);
+
+            //time up
+            setShowTimeUp(true);
             
             const saveSession = async () => {
                 if (!activeTask || !startTime) return;
@@ -55,6 +60,8 @@ export default function Timer({ isGuest, activeTask, onSelectTask, endSession }:
                         end_time: endTime,
                         duration: durationMinutes
                     });
+
+                    endSession();
                     
                     setStartTime(null);
                     setSeconds(initialSeconds);
@@ -71,7 +78,7 @@ export default function Timer({ isGuest, activeTask, onSelectTask, endSession }:
         return () => {
             if (interval) clearInterval(interval);
         };
-    }, [isActive, seconds, activeTask, initialSeconds, startTime, endSession]);
+    }, [isActive, seconds, activeTask, initialSeconds, startTime, endSession, isGuest]);
 
     const formatTime = (totalSeconds: number) => {
         const mins = Math.floor(totalSeconds / 60);
@@ -183,6 +190,21 @@ export default function Timer({ isGuest, activeTask, onSelectTask, endSession }:
         onSelectTask(task);
         setIsDropdownOpen(false);
     };
+
+    useEffect(() => {
+        let timeoutId: ReturnType<typeof setTimeout> 
+
+        if (showTimeUp){
+            timeoutId = setTimeout(() => {
+                setShowTimeUp(false);
+            }, 3000);
+        }
+
+        return () => {
+            if (timeoutId) clearTimeout(timeoutId)
+        }
+            
+    }, [showTimeUp])
     
     return (
         <div className="relative z-10 bg-gray-800/60 backdrop-blur-sm border-2 border-gray-500 rounded-lg p-5 text-white font-mono w-80 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.8)] flex flex-col items-center">
@@ -208,7 +230,7 @@ export default function Timer({ isGuest, activeTask, onSelectTask, endSession }:
                     </span>
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 group-hover:text-violet-400 transition-colors">
                         <svg 
-                            className={`w-5 h-5 transition-transform duration-300 ${isDropdownOpen ? 'rotate-0 text-violet-400' : '-rotate-90'}`} 
+                            className="w-5 h-5 transition-transform duration-300 rotate-0"
                             aria-hidden="true" 
                             xmlns="http://www.w3.org/2000/svg" 
                             fill="currentColor" 
@@ -283,6 +305,25 @@ export default function Timer({ isGuest, activeTask, onSelectTask, endSession }:
                     End Session
                 </button>
             </div>
+            {showTimeUp && (
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-gray-900/95 rounded-lg backdrop-blur-md border-2 border-violet-500 shadow-[0_0_20px_rgba(139,92,246,0.5)]"
+                >
+                    <span className="text-5xl mb-3 animate-bounce">🎉</span>
+                    <h2 className="text-2xl font-bold text-white tracking-widest mb-1">TIME'S UP!</h2>
+                    <p className="text-sm text-violet-300 mb-6">Session successfully recorded.</p>
+                    
+                    <button 
+                        onClick={() => setShowTimeUp(false)}
+                        className="bg-violet-600 hover:bg-violet-500 text-white px-6 py-2 rounded-sm text-sm font-bold border-b-4 border-violet-800 active:border-b-0 active:translate-y-1 transition-all cursor-pointer"
+                    >
+                        Close
+                    </button>
+                </motion.div>
+            )}
         </div>
     )
 }

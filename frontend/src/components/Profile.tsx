@@ -34,7 +34,14 @@ export default function Profile({ username, onLogout, onUpdateUsername }: Profil
                 setIsEditModalOpen(false);
     
             } catch (error: any) {
-                setErrorMsg(error.response?.data?.message || "Connection to server failed!");
+                const rawError = error.response?.data?.message || "";
+                const lowerError = rawError.toLowerCase();
+                
+                if (lowerError.includes("unique") || lowerError.includes("duplicate") || lowerError.includes("already exists")) {
+                    setErrorMsg("Username is already taken. Please choose another one.");
+                } else {
+                    setErrorMsg(rawError || "Connection to server failed!");
+                }
             } finally {
                 setIsLoading(false);
             }
@@ -104,15 +111,21 @@ export default function Profile({ username, onLogout, onUpdateUsername }: Profil
 
                         <div className="flex justify-end gap-3 mt-2">
                             <button 
+                                disabled={isLoading}
                                 onClick={() => setIsEditModalOpen(false)}
-                                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-sm text-sm font-bold border-b-4 border-gray-900 active:border-b-0 active:translate-y-1 transition-all cursor-pointer"
+                                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-sm text-sm font-bold border-b-4 border-gray-900 active:border-b-0 active:translate-y-1 transition-all cursor-pointer disabled:cursor-not-allowed"
                             >
                                 Cancel
                             </button>
                             <button 
                                 onClick={handleSaveUsername}
-                                disabled={isLoading}
-                                className="px-4 py-2 bg-violet-500 hover:bg-violet-400 text-white rounded-sm text-sm font-bold border-b-4 border-violet-700 active:border-b-0 active:translate-y-1 transition-all cursor-pointer"
+                                disabled={isLoading || newUsername.trim() === ""}
+                                className={`px-4 py-2 text-white rounded-sm text-sm font-bold border-b-4 active:border-b-0 active:translate-y-1 transition-all cursor-pointer disabled:cursor-not-allowed
+                                     ${
+                                        isLoading 
+                                        ? "bg-gray-600 text-gray-400 border-gray-700 animate-pulse" 
+                                        : "bg-violet-500 hover:bg-violet-400 text-black border-violet-700"
+                                    }`}
                             >
                                 {isLoading ? "Loading..." : "Save"}
                             </button>
