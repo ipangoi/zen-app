@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"zen/internal/database"
 	"zen/internal/router"
 )
@@ -8,5 +9,9 @@ import (
 func main() {
 	database.StartDB()
 	r := router.StartApp()
-	r.Run(":8080")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	r.Run(":" + port)
 }
